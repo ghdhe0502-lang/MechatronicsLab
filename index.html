@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>مختبر الميكاترونكس - البطاقة الرقمية | InstaPay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- إضافة مكتبة QRCode.js لإنشاء QR كود ديناميكي (للبطاقة و InstaPay) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-body: #f4f7fc;
+            --bg-card: #ffffff;
+            --text-main: #1e2a3e;
+            --text-sub: #4a627a;
+            --primary: #0a3b5c;
+            --primary-light: #1e5a7a;
+            --accent: #25D366;
+            --instapay: #0047AB;
+            --instapay-light: #eef3ff;
+            --facebook: #1877f2;
+            --border: #e2e8f0;
+            --designer-bg: #f0f4f9;
+            --shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+            --map-border: #cbd5e1;
+            --qr-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --primary: #38bdf8;
+            --primary-light: #7dd3fc;
+            --border: #334155;
+            --designer-bg: #0f172a;
+            --shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
+            --map-border: #475569;
+            --instapay-light: #1e2a4a;
+            --qr-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Segoe UI', 'Tajawal', system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.25s ease;
+        }
+
+        .card {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 480px;
+            padding: 28px 22px 32px;
+            border-radius: 36px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border: 1px solid var(--border);
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-inline {
+            position: absolute;
+            top: 22px;
+            left: 22px;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s;
+            backdrop-filter: blur(2px);
+            z-index: 10;
+        }
+
+        .theme-toggle-inline:hover {
+            transform: scale(1.05);
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .logo-area {
+            margin-top: 8px;
+        }
+
+        .profile-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 28px;
+            object-fit: cover;
+            margin-bottom: 12px;
+            border: 2px solid var(--primary-light);
+            background: #fff;
+            padding: 3px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+        }
+
+        .info h2 {
+            margin: 5px 0 4px;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.3px;
+        }
+
+        .management {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 18px;
+            font-weight: 500;
+            background: var(--designer-bg);
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 40px;
+        }
+
+        .contact-box {
+            background: var(--bg-body);
+            margin: 12px 0;
+            padding: 12px 14px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: 0.1s;
+        }
+
+        .contact-label {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .contact-value {
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .wa-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            background: rgba(37, 211, 102, 0.1);
+            padding: 5px 12px;
+            border-radius: 50px;
+            transition: 0.2s;
+        }
+
+        .wa-link:hover {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .fb-link {
+            color: var(--facebook);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            background: rgba(24, 119, 242, 0.1);
+            padding: 5px 12px;
+            border-radius: 50px;
+            transition: 0.2s;
+            margin-top: 6px;
+        }
+        
+        .fb-link:hover {
+            background: var(--facebook);
+            color: white;
+        }
+
+        /* قسم InstaPay الجديد - سيكون تحت الخريطة */
+        .instapay-section {
+            background: linear-gradient(135deg, var(--instapay-light) 0%, var(--bg-card) 100%);
+            border-radius: 28px;
+            padding: 16px;
+            margin: 18px 0 12px;
+            border: 2px solid var(--instapay);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+        
+        .instapay-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .instapay-header i {
+            font-size: 28px;
+            color: var(--instapay);
+        }
+        
+        .instapay-header h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--instapay);
+            margin: 0;
+        }
+        
+        .instapay-id {
+            background: var(--bg-card);
+            padding: 10px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 12px 0;
+            border: 1px dashed var(--instapay);
+            word-break: break-all;
+            color: var(--text-main);
+        }
+        
+        .instapay-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-instapay {
+            background: var(--instapay);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn-instapay-outline {
+            background: transparent;
+            border: 2px solid var(--instapay);
+            color: var(--instapay);
+        }
+        
+        .btn-instapay:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        
+        .instapay-qr {
+            display: flex;
+            justify-content: center;
+            margin: 12px 0 8px;
+        }
+        
+        #instapay-qr-code {
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .instapay-note {
+            font-size: 10px;
+            color: var(--text-sub);
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .address-box {
+            font-size: 13px;
+            color: var(--text-main);
+            background: var(--designer-bg);
+            padding: 14px;
+            border-radius: 20px;
+            margin: 14px 0 12px;
+            line-height: 1.55;
+            text-align: right;
+            border-right: 4px solid var(--primary);
+            font-weight: 500;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 12px;
+            margin: 18px 0 14px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 700;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .live-map-container {
+            width: 100%;
+            height: 240px;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid var(--map-border);
+            margin: 12px 0 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #eef2f5;
+        }
+
+        .live-map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .map-helper {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        /* قسم QR كود البطاقة - سيكون تحت الدفع */
+        .qr-section {
+            background: var(--designer-bg);
+            border-radius: 24px;
+            padding: 16px 12px;
+            margin: 18px 0 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .qr-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .qr-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        #qrcode {
+            display: inline-block;
+            padding: 8px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        #qrcode img {
+            display: block;
+            margin: 0 auto;
+            width: 130px;
+            height: auto;
+            border-radius: 12px;
+        }
+        
+        .qr-note {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .download-qr-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        
+        .download-qr-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .designer-info {
+            margin-top: 20px;
+            padding: 14px 12px;
+            background: var(--designer-bg);
+            border-radius: 26px;
+            border: 1px dashed var(--border);
+        }
+
+        .designer-title {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .designer-name {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .designer-contact {
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            font-size: 13px;
+        }
+
+        .designer-contact a {
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .designer-contact a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 450px) {
+            .card { padding: 22px 18px 26px; }
+            .contact-value { font-size: 17px; }
+            .btn { font-size: 12px; }
+            #qrcode img { width: 110px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <button class="theme-toggle-inline" id="themeBtn" aria-label="الوضع الداكن">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="logo-area">
+        <img src="p.png" class="profile-img" alt="Mechatronics Lab Logo" onerror="this.src='https://i.ibb.co/VmqKkFv/Mechatronics-Lab-Logo.jpg'">
+    </div>
+    
+    <div class="info">
+        <h2>Mechatronics Lab</h2>
+        <div class="management">تحت إدارة المهندس عمرو عادل</div>
+        
+        <div class="contact-box">
+            <span class="contact-label"><i class="fas fa-headset"></i> المبيعات (Sales)</span>
+            <a href="tel:01112623230" class="contact-value">01112623230</a>
+            <a href="https://wa.me/201112623230" target="_blank" class="wa-link">
+                <i class="fab fa-whatsapp"></i> واتساب المبيعات
+            </a>
+        </div>
+
+        <div class="contact-box">
+            <span class="contact-label"><i class="fas fa-user-tie"></i> الإدارة (Management)</span>
+            <a href="tel:01062184534" class="contact-value">01062184534</a>
+            <a href="https://wa.me/201062184534" target="_blank" class="wa-link">
+                <i class="fab fa-whatsapp"></i> واتساب الإدارة
+            </a>
+        </div>
+
+        <div class="contact-box">
+            <span class="contact-label"><i class="fab fa-facebook"></i> صفحتنا على فيسبوك</span>
+            <a href="https://www.facebook.com/assiutlab" target="_blank" class="fb-link" rel="noopener noreferrer">
+                <i class="fab fa-facebook"></i> مختبر الميكاترونكس - أسيوط
+            </a>
+        </div>
+
+        <div class="address-box">
+            <i class="fas fa-location-dot" style="color: var(--primary); margin-left: 5px;"></i> <b>📍 العنوان الدقيق:</b><br>
+            بجوار ماركت وفر والرحاب فريش، عمارة رقم 3، ش عبد العزيز الكاف، بالأزهر الدور الأرضي، متفرع من شارع الأزهر، أسيوط، 71511
+        </div>
+    </div>
+
+    <div class="action-btns">
+        <button class="btn" id="saveContactsBtn"><i class="fas fa-user-plus"></i> حفظ الأرقام</button>
+        <button class="btn btn-outline" id="shareCardBtn"><i class="fas fa-share-alt"></i> مشاركة</button>
+    </div>
+
+    <!-- خريطة لايف لوكيشن -->
+    <div class="live-map-container">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3548.6807670315266!2d31.175859799999998!3d27.197768499999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14450b7b2a7ff061%3A0x61298b67823df288!2z2YXroTSX96DWJFrT2DxVdKoQsgogE1kwRMrn!5e0!3m2!1sar!2seg!4v1775166859919!5m2!1sar!2seg" 
+            width="600" 
+            height="450" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            title="موقع ميكاترونكس لاب على الخريطة">
+        </iframe>
+    </div>
+    <div class="map-helper" id="mapHelper">
+        <i class="fas fa-map-pin"></i> <span>📍 اضغط هنا للحصول على الاتجاهات إلى المختبر</span>
+    </div>
+
+    <!-- قسم InstaPay - تحت الخريطة مباشرة -->
+    <div class="instapay-section">
+        <div class="instapay-header">
+            <i class="fas fa-bolt"></i>
+            <h3>InstaPay | الدفع الفوري</h3>
+        </div>
+        <div class="instapay-id">
+            <i class="fas fa-envelope"></i> mecha-tronics-lab@instapay
+        </div>
+        <div class="instapay-qr" id="instapay-qr-container">
+            <div id="instapay-qr-code"></div>
+        </div>
+        <div class="instapay-buttons">
+            <a href="https://ipn.eg/S/mecha-tronics-lab/instapay/1wQCUn" target="_blank" class="btn-instapay">
+                <i class="fas fa-external-link-alt"></i> إرسال المال عبر InstaPay
+            </a>
+            <button class="btn-instapay btn-instapay-outline" id="copyInstapayBtn">
+                <i class="fas fa-copy"></i> نسخ المعرف
+            </button>
+        </div>
+        <div class="instapay-note">
+            <i class="fas fa-shield-alt"></i> اضغط على الرابط لتحويل الأموال بأمان عبر تطبيق InstaPay
+        </div>
+    </div>
+
+    <!-- قسم QR كود البطاقة - تحت الدفع -->
+    <div class="qr-section">
+        <div class="qr-title">
+            <i class="fas fa-qrcode"></i>
+            <span>رابط البطاقة الرقمية (QR Code)</span>
+        </div>
+        <div class="qr-wrapper" id="qr-wrapper">
+            <div id="qrcode"></div>
+        </div>
+        <div class="qr-note">
+            <i class="fas fa-mobile-alt"></i> إمسح الكود بكاميرا هاتفك للوصول المباشر للبطاقة
+        </div>
+        <button class="download-qr-btn" id="downloadQRBtn">
+            <i class="fas fa-download"></i> تحميل QR Code
+        </button>
+    </div>
+
+    <div class="designer-info">
+        <span class="designer-title">✨ تصميم وتطوير البطاقة الرقمية</span>
+        <span class="designer-name">Amir Gamal</span>
+        <div class="designer-contact">
+            <a href="tel:01101200723"><i class="fas fa-phone-alt"></i> 01101200723</a>
+            <a href="https://wa.me/201101200723" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> واتساب</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --------------------- الوضع الداكن ---------------------
+        const rootElement = document.documentElement;
+        const themeBtn = document.getElementById('themeBtn');
+        const themeIcon = themeBtn.querySelector('i');
+
+        const savedTheme = localStorage.getItem('mecha_theme');
+        if (savedTheme === 'dark') {
+            rootElement.setAttribute('data-theme', 'dark');
+            themeIcon.className = 'fas fa-sun';
+        } else if (savedTheme === 'light') {
+            rootElement.setAttribute('data-theme', 'light');
+            themeIcon.className = 'fas fa-moon';
+        } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                rootElement.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('mecha_theme', 'dark');
+            } else {
+                rootElement.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('mecha_theme', 'light');
+            }
+        }
+
+        window.toggleMode = function() {
+            const currentTheme = rootElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                rootElement.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('mecha_theme', 'light');
+                regenerateQRIfNeeded();
+                regenerateInstaPayQR();
+            } else {
+                rootElement.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('mecha_theme', 'dark');
+                regenerateQRIfNeeded();
+                regenerateInstaPayQR();
+            }
+        };
+
+        themeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.toggleMode();
+        });
+
+        // --------------------- إنشاء QR كود البطاقة ---------------------
+        const currentPageUrl = window.location.href;
+        
+        function generateQRCode() {
+            const qrContainer = document.getElementById('qrcode');
+            if (!qrContainer) return;
+            qrContainer.innerHTML = '';
+            try {
+                new QRCode(qrContainer, {
+                    text: currentPageUrl,
+                    width: 130,
+                    height: 130,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+                setTimeout(() => {
+                    const qrImg = qrContainer.querySelector('img');
+                    if (qrImg) {
+                        qrImg.style.width = '130px';
+                        qrImg.style.height = 'auto';
+                        qrImg.style.borderRadius = '12px';
+                    }
+                }, 50);
+            } catch(err) {
+                console.warn("QR generation fallback", err);
+            }
+        }
+        
+        function regenerateQRIfNeeded() {
+            generateQRCode();
+        }
+        
+        // --------------------- إنشاء QR كود InstaPay ---------------------
+        const instaPayUrl = "https://ipn.eg/S/mecha-tronics-lab/instapay/1wQCUn";
+        const instaPayEmail = "mecha-tronics-lab@instapay";
+        
+        function generateInstaPayQR() {
+            const instaQrContainer = document.getElementById('instapay-qr-code');
+            if (!instaQrContainer) return;
+            instaQrContainer.innerHTML = '';
+            try {
+                new QRCode(instaQrContainer, {
+                    text: instaPayUrl,
+                    width: 100,
+                    height: 100,
+                    colorDark: "#0047AB",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+                setTimeout(() => {
+                    const qrImg = instaQrContainer.querySelector('img');
+                    if (qrImg) {
+                        qrImg.style.width = '100px';
+                        qrImg.style.height = 'auto';
+                        qrImg.style.borderRadius = '12px';
+                    }
+                }, 50);
+            } catch(err) {
+                console.warn("InstaPay QR generation error", err);
+                instaQrContainer.innerHTML = '<div style="font-size:10px;color:red;">⚠️ خطأ</div>';
+            }
+        }
+        
+        function regenerateInstaPayQR() {
+            generateInstaPayQR();
+        }
+        
+        function copyInstaPayId() {
+            navigator.clipboard.writeText(instaPayEmail).then(() => {
+                showToast("✅ تم نسخ معرف InstaPay: " + instaPayEmail);
+            }).catch(() => {
+                alert("InstaPay ID: " + instaPayEmail);
+            });
+        }
+        
+        function downloadQR() {
+            const qrImg = document.querySelector('#qrcode img');
+            if (qrImg) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = qrImg.naturalWidth || 400;
+                canvas.height = qrImg.naturalHeight || 400;
+                ctx.drawImage(qrImg, 0, 0, canvas.width, canvas.height);
+                const link = document.createElement('a');
+                link.download = 'Mechatronics_Lab_QR.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } else {
+                generateQRCode();
+                setTimeout(() => {
+                    const newImg = document.querySelector('#qrcode img');
+                    if (newImg) {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = newImg.naturalWidth || 400;
+                        canvas.height = newImg.naturalHeight || 400;
+                        ctx.drawImage(newImg, 0, 0, canvas.width, canvas.height);
+                        const link = document.createElement('a');
+                        link.download = 'Mechatronics_Lab_QR.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    } else {
+                        alert("يرجى الانتظار قليلاً حتى يتم تحميل QR code ثم حاول مرة أخرى.");
+                    }
+                }, 200);
+            }
+        }
+        
+        // --------------------- دوال حفظ الأرقام والمشاركة ---------------------
+        function saveContactsAsVCard() {
+            const vCardData = `BEGIN:VCARD
+VERSION:3.0
+FN:مختبر الميكاترونكس - Mechatronics Lab
+ORG:ميكاترونكس لاب
+TITLE:خدمات إلكترونية وميكانيكية
+TEL;TYPE=CELL,VOICE:01112623230
+TEL;TYPE=WORK,VOICE:01062184534
+URL:${currentPageUrl}
+URL;type=Facebook:https://www.facebook.com/assiutlab
+URL;type=InstaPay:${instaPayUrl}
+ADR;TYPE=WORK:;;عمارة 3 شارع عبد العزيز الكاف - بجوار ماركت وفر والرحاب فريش;أسيوط;أسيوط;71511;مصر
+NOTE:تحت إدارة المهندس عمرو عادل - الدفع عبر InstaPay: mecha-tronics-lab@instapay
+END:VCARD`;
+            const blob = new Blob([vCardData], { type: "text/vcard" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Mechatronics_Lab_Contacts.vcf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function shareDigitalCard() {
+            const shareData = {
+                title: 'مختبر الميكاترونكس | البطاقة الرقمية',
+                text: 'مختبر الميكاترونكس - أسيوط | للدفع عبر InstaPay: mecha-tronics-lab@instapay',
+                url: currentPageUrl,
+            };
+            if (navigator.share && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                navigator.share(shareData).catch((err) => {
+                    if (err.name !== 'AbortError') fallbackShare();
+                });
+            } else {
+                fallbackShare();
+            }
+        }
+
+        function fallbackShare() {
+            const dummy = document.createElement('textarea');
+            dummy.value = currentPageUrl;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            alert("📋 تم نسخ رابط البطاقة! يمكنك مشاركته مع العملاء.\nرابط البطاقة: " + currentPageUrl);
+        }
+
+        // --------------------- تفاعلات الخريطة ---------------------
+        function openMapsDirections() {
+            const lat = 27.1977685;
+            const lng = 31.1758598;
+            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+            window.open(mapsUrl, '_blank');
+        }
+        
+        const mapHelperDiv = document.getElementById('mapHelper');
+        if (mapHelperDiv) {
+            mapHelperDiv.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openMapsDirections();
+            });
+        }
+        
+        const addressBox = document.querySelector('.address-box');
+        if (addressBox && !document.getElementById('quickDirBtn')) {
+            const directionBtn = document.createElement('div');
+            directionBtn.style.marginTop = '10px';
+            directionBtn.style.display = 'flex';
+            directionBtn.style.justifyContent = 'center';
+            directionBtn.innerHTML = `<button id="quickDirBtn" style="background: none; border: 1px solid var(--primary); border-radius: 30px; padding: 6px 12px; font-size: 12px; font-weight: bold; color: var(--primary); cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-directions"></i> احصل على الاتجاهات</button>`;
+            addressBox.insertAdjacentElement('afterend', directionBtn);
+            const quickDir = document.getElementById('quickDirBtn');
+            if (quickDir) quickDir.addEventListener('click', (e) => { e.stopPropagation(); openMapsDirections(); });
+        }
+        
+        if (addressBox) {
+            addressBox.style.cursor = 'pointer';
+            addressBox.addEventListener('click', () => {
+                const addressText = "عمارة 3 ش عبد العزيز الكاف، بالأزهر الدور الأرضي، بجوار ماركت وفر والرحاب فريش، أسيوط";
+                navigator.clipboard.writeText(addressText).then(() => showToast("📋 تم نسخ العنوان إلى الحافظة")).catch(() => alert("العنوان: " + addressText));
+            });
+            addressBox.title = "انقر لنسخ العنوان";
+        }
+        
+        function showToast(msg) {
+            let toast = document.createElement('div');
+            toast.innerText = msg;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = 'var(--primary)';
+            toast.style.color = 'white';
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '40px';
+            toast.style.fontSize = '14px';
+            toast.style.fontWeight = 'bold';
+            toast.style.zIndex = '999';
+            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 2000);
+        }
+        
+        // ربط الأزرار
+        const saveBtn = document.getElementById('saveContactsBtn');
+        const shareBtn = document.getElementById('shareCardBtn');
+        const copyInstaBtn = document.getElementById('copyInstapayBtn');
+        const downloadQRBtn = document.getElementById('downloadQRBtn');
+        
+        if (saveBtn) saveBtn.addEventListener('click', saveContactsAsVCard);
+        if (shareBtn) shareBtn.addEventListener('click', shareDigitalCard);
+        if (copyInstaBtn) copyInstaBtn.addEventListener('click', copyInstaPayId);
+        if (downloadQRBtn) downloadQRBtn.addEventListener('click', downloadQR);
+        
+        window.addEventListener('load', () => {
+            generateQRCode();
+            generateInstaPayQR();
+            const iframeSrcCorrect = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3548.6807670315266!2d31.175859799999998!3d27.197768499999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14450b7b2a7ff061%3A0x61298b67823df288!2z2YXroTSX96DWJFrT2DxVdKoQsgogE1kwRMrn!5e0!3m2!1sar!2seg!4v1775166859919!5m2!1sar!2seg";
+            const existingIframe = document.querySelector('.live-map-container iframe');
+            if (existingIframe && existingIframe.src !== iframeSrcCorrect) existingIframe.src = iframeSrcCorrect;
+        });
+        
+        const mapContainer = document.querySelector('.live-map-container');
+        let pressTimer = null;
+        if (mapContainer) {
+            mapContainer.addEventListener('touchstart', (e) => { pressTimer = setTimeout(() => { openMapsDirections(); }, 800); });
+            mapContainer.addEventListener('touchend', () => { if (pressTimer) clearTimeout(pressTimer); });
+            mapContainer.addEventListener('touchmove', () => { if (pressTimer) clearTimeout(pressTimer); });
+            mapContainer.style.cursor = 'pointer';
+        }
+    })();
+</script>
+</body>
+</html>
