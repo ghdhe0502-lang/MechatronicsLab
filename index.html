@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>مختبر الميكاترونكس - البطاقة الرقمية | InstaPay</title>
+    <title>مختبر الميكاترونكس - البطاقة الرقمية | متجر ميكاترونكس لاب و InstaPay</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- إضافة مكتبة QRCode.js لإنشاء QR كود ديناميكي (للبطاقة و InstaPay) -->
+    <!-- إضافة مكتبة QRCode.js لإنشاء QR كود ديناميكي -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * {
@@ -25,6 +25,8 @@
             --instapay: #0047AB;
             --instapay-light: #eef3ff;
             --facebook: #1877f2;
+            --shop: #0047AB;      /* نفس لون InstaPay للتناسق */
+            --shop-light: #eef3ff;
             --border: #e2e8f0;
             --designer-bg: #f0f4f9;
             --shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
@@ -44,6 +46,7 @@
             --shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
             --map-border: #475569;
             --instapay-light: #1e2a4a;
+            --shop-light: #1e2a4a;
             --qr-bg: #ffffff;
         }
 
@@ -63,7 +66,7 @@
         .card {
             background: var(--bg-card);
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             padding: 28px 22px 32px;
             border-radius: 36px;
             box-shadow: var(--shadow);
@@ -73,6 +76,7 @@
             transition: all 0.2s;
         }
 
+        /* زر الوضع الليلي الأنيق */
         .theme-toggle-inline {
             position: absolute;
             top: 22px;
@@ -202,7 +206,91 @@
             color: white;
         }
 
-        /* قسم InstaPay الجديد - سيكون تحت الخريطة */
+        /* ========= قسم المتجر (بنفس لون InstaPay) ========= */
+        .shop-section {
+            background: linear-gradient(135deg, var(--shop-light) 0%, var(--bg-card) 100%);
+            border-radius: 28px;
+            padding: 18px 14px;
+            margin: 18px 0 12px;
+            border: 2px solid var(--shop);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+        
+        .shop-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .shop-header i {
+            font-size: 28px;
+            color: var(--shop);
+        }
+        
+        .shop-header h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--shop);
+            margin: 0;
+        }
+        
+        .shop-badge {
+            background: var(--shop);
+            color: white;
+            border-radius: 50px;
+            padding: 4px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        
+        .shop-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 12px 0 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-shop {
+            background: var(--shop);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn-shop-outline {
+            background: transparent;
+            border: 2px solid var(--shop);
+            color: var(--shop);
+        }
+        
+        .btn-shop:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        
+        .shop-note {
+            font-size: 11px;
+            color: var(--text-sub);
+            text-align: center;
+            margin-top: 12px;
+        }
+        
+        /* قسم InstaPay */
         .instapay-section {
             background: linear-gradient(135deg, var(--instapay-light) 0%, var(--bg-card) 100%);
             border-radius: 28px;
@@ -380,7 +468,7 @@
             cursor: pointer;
         }
 
-        /* قسم QR كود البطاقة - سيكون تحت الدفع */
+        /* قسم QR كود البطاقة */
         .qr-section {
             background: var(--designer-bg);
             border-radius: 24px;
@@ -422,13 +510,6 @@
             width: 130px;
             height: auto;
             border-radius: 12px;
-        }
-        
-        .qr-note {
-            font-size: 10px;
-            color: var(--text-sub);
-            margin-top: 8px;
-            text-align: center;
         }
         
         .download-qr-btn {
@@ -502,6 +583,7 @@
             .contact-value { font-size: 17px; }
             .btn { font-size: 12px; }
             #qrcode img { width: 110px; }
+            .btn-shop { padding: 10px 18px; font-size: 13px; }
         }
     </style>
 </head>
@@ -554,6 +636,28 @@
         <button class="btn btn-outline" id="shareCardBtn"><i class="fas fa-share-alt"></i> مشاركة</button>
     </div>
 
+    <!-- ========= قسم متجر ميكاترونكس لاب (بنفس الأزرق المتناسق مع InstaPay) ========= -->
+    <div class="shop-section">
+        <div class="shop-header">
+            <i class="fas fa-store"></i>
+            <h3>🛒 متجر ميكاترونكس لاب</h3>
+        </div>
+        <div class="shop-badge">✨ طلب أونلاين</div>
+        
+        <div class="shop-buttons">
+            <!-- الرابط تم تغييره إلى الرابط الرئيسي لصفحة المنتجات كما طلبت -->
+            <a href="https://www.mechatronics-lab.com/shop" target="_blank" class="btn-shop">
+                <i class="fas fa-shopping-cart"></i> طلب أونلاين الآن
+            </a>
+            <button class="btn-shop btn-shop-outline" id="copyShopLinkBtn">
+                <i class="fas fa-copy"></i> نسخ رابط المتجر
+            </button>
+        </div>
+        <div class="shop-note">
+            <i class="fas fa-mobile-alt"></i> تصفح جميع المنتجات الإلكترونية واطلب عبر الإنترنت
+        </div>
+    </div>
+
     <!-- خريطة لايف لوكيشن -->
     <div class="live-map-container">
         <iframe 
@@ -571,7 +675,7 @@
         <i class="fas fa-map-pin"></i> <span>📍 اضغط هنا للحصول على الاتجاهات إلى المختبر</span>
     </div>
 
-    <!-- قسم InstaPay - تحت الخريطة مباشرة -->
+    <!-- قسم InstaPay -->
     <div class="instapay-section">
         <div class="instapay-header">
             <i class="fas fa-bolt"></i>
@@ -596,7 +700,7 @@
         </div>
     </div>
 
-    <!-- قسم QR كود البطاقة - تحت الدفع -->
+    <!-- قسم QR كود البطاقة -->
     <div class="qr-section">
         <div class="qr-title">
             <i class="fas fa-qrcode"></i>
@@ -748,6 +852,16 @@
             });
         }
         
+        // نسخ رابط المتجر (الرابط الجديد)
+        const shopUrl = "https://www.mechatronics-lab.com/shop";
+        function copyShopLink() {
+            navigator.clipboard.writeText(shopUrl).then(() => {
+                showToast("✅ تم نسخ رابط متجر ميكاترونكس لاب: " + shopUrl);
+            }).catch(() => {
+                alert("رابط المتجر: " + shopUrl);
+            });
+        }
+        
         function downloadQR() {
             const qrImg = document.querySelector('#qrcode img');
             if (qrImg) {
@@ -793,8 +907,9 @@ TEL;TYPE=WORK,VOICE:01062184534
 URL:${currentPageUrl}
 URL;type=Facebook:https://www.facebook.com/assiutlab
 URL;type=InstaPay:${instaPayUrl}
+URL;type=Shop:${shopUrl}
 ADR;TYPE=WORK:;;عمارة 3 شارع عبد العزيز الكاف - بجوار ماركت وفر والرحاب فريش;أسيوط;أسيوط;71511;مصر
-NOTE:تحت إدارة المهندس عمرو عادل - الدفع عبر InstaPay: mecha-tronics-lab@instapay
+NOTE:تحت إدارة المهندس عمرو عادل - الدفع عبر InstaPay: mecha-tronics-lab@instapay | متجر ميكاترونكس لاب للطلب الأونلاين: ${shopUrl}
 END:VCARD`;
             const blob = new Blob([vCardData], { type: "text/vcard" });
             const url = URL.createObjectURL(blob);
@@ -810,7 +925,7 @@ END:VCARD`;
         function shareDigitalCard() {
             const shareData = {
                 title: 'مختبر الميكاترونكس | البطاقة الرقمية',
-                text: 'مختبر الميكاترونكس - أسيوط | للدفع عبر InstaPay: mecha-tronics-lab@instapay',
+                text: 'مختبر الميكاترونكس - أسيوط | للطلب أونلاين: متجر ميكاترونكس لاب mechatronics-lab.com/shop | الدفع عبر InstaPay: mecha-tronics-lab@instapay',
                 url: currentPageUrl,
             };
             if (navigator.share && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
@@ -892,11 +1007,13 @@ END:VCARD`;
         const saveBtn = document.getElementById('saveContactsBtn');
         const shareBtn = document.getElementById('shareCardBtn');
         const copyInstaBtn = document.getElementById('copyInstapayBtn');
+        const copyShopBtn = document.getElementById('copyShopLinkBtn');
         const downloadQRBtn = document.getElementById('downloadQRBtn');
         
         if (saveBtn) saveBtn.addEventListener('click', saveContactsAsVCard);
         if (shareBtn) shareBtn.addEventListener('click', shareDigitalCard);
         if (copyInstaBtn) copyInstaBtn.addEventListener('click', copyInstaPayId);
+        if (copyShopBtn) copyShopBtn.addEventListener('click', copyShopLink);
         if (downloadQRBtn) downloadQRBtn.addEventListener('click', downloadQR);
         
         window.addEventListener('load', () => {
