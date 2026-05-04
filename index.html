@@ -206,7 +206,7 @@
             color: white;
         }
 
-        /* ========= قسم المتجر (بنفس لون InstaPay) ========= */
+        /* ========= قسم متجر ميكاترونكس لاب ========= */
         .shop-section {
             background: linear-gradient(135deg, var(--shop-light) 0%, var(--bg-card) 100%);
             border-radius: 28px;
@@ -636,28 +636,6 @@
         <button class="btn btn-outline" id="shareCardBtn"><i class="fas fa-share-alt"></i> مشاركة</button>
     </div>
 
-    <!-- ========= قسم متجر ميكاترونكس لاب (بنفس الأزرق المتناسق مع InstaPay) ========= -->
-    <div class="shop-section">
-        <div class="shop-header">
-            <i class="fas fa-store"></i>
-            <h3>🛒 متجر ميكاترونكس لاب</h3>
-        </div>
-        <div class="shop-badge">✨ طلب أونلاين</div>
-        
-        <div class="shop-buttons">
-            <!-- الرابط تم تغييره إلى الرابط الرئيسي لصفحة المنتجات كما طلبت -->
-            <a href="https://www.mechatronics-lab.com/shop" target="_blank" class="btn-shop">
-                <i class="fas fa-shopping-cart"></i> طلب أونلاين الآن
-            </a>
-            <button class="btn-shop btn-shop-outline" id="copyShopLinkBtn">
-                <i class="fas fa-copy"></i> نسخ رابط المتجر
-            </button>
-        </div>
-        <div class="shop-note">
-            <i class="fas fa-mobile-alt"></i> تصفح جميع المنتجات الإلكترونية واطلب عبر الإنترنت
-        </div>
-    </div>
-
     <!-- خريطة لايف لوكيشن -->
     <div class="live-map-container">
         <iframe 
@@ -675,7 +653,7 @@
         <i class="fas fa-map-pin"></i> <span>📍 اضغط هنا للحصول على الاتجاهات إلى المختبر</span>
     </div>
 
-    <!-- قسم InstaPay -->
+    <!-- قسم InstaPay (تحت الخريطة) -->
     <div class="instapay-section">
         <div class="instapay-header">
             <i class="fas fa-bolt"></i>
@@ -697,6 +675,27 @@
         </div>
         <div class="instapay-note">
             <i class="fas fa-shield-alt"></i> اضغط على الرابط لتحويل الأموال بأمان عبر تطبيق InstaPay
+        </div>
+    </div>
+
+    <!-- ========= قسم متجر ميكاترونكس لاب (تم نقله إلى أسفل InstaPay) ========= -->
+    <div class="shop-section">
+        <div class="shop-header">
+            <i class="fas fa-store"></i>
+            <h3>🛒 متجر ميكاترونكس لاب</h3>
+        </div>
+        <div class="shop-badge">✨ طلب أونلاين</div>
+        
+        <div class="shop-buttons">
+            <a href="https://www.mechatronics-lab.com/shop" target="_blank" class="btn-shop">
+                <i class="fas fa-shopping-cart"></i> طلب أونلاين الآن
+            </a>
+            <button class="btn-shop btn-shop-outline" id="copyShopLinkBtn">
+                <i class="fas fa-copy"></i> نسخ رابط المتجر
+            </button>
+        </div>
+        <div class="shop-note">
+            <i class="fas fa-mobile-alt"></i> تصفح جميع المنتجات الإلكترونية واطلب عبر الإنترنت
         </div>
     </div>
 
@@ -852,7 +851,7 @@
             });
         }
         
-        // نسخ رابط المتجر (الرابط الجديد)
+        // نسخ رابط المتجر (الرئيسي لجميع المنتجات)
         const shopUrl = "https://www.mechatronics-lab.com/shop";
         function copyShopLink() {
             navigator.clipboard.writeText(shopUrl).then(() => {
